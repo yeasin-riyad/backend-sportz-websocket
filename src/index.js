@@ -2,7 +2,6 @@ import express from 'express';
 import http from 'http';
 import { matchRouter } from './routes/matches.js';
 import { attachWebSocketServer } from './ws/server.js';
-import { matchRouter } from './routes/matches.js';
 
 
 
