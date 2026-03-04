@@ -2,6 +2,8 @@ import express from 'express';
 import http from 'http';
 import { matchRouter } from './routes/matches.js';
 import { attachWebSocketServer } from './ws/server.js';
+import { matchRouter } from './routes/matches.js';
+
 
 
 
@@ -24,6 +26,8 @@ app.use('/matches', matchRouter);
 
 const { broadcastMatchCreated } = attachWebSocketServer(server);
 app.locals.broadcastMatchCreated = broadcastMatchCreated;
+// Import and use match routes
+app.use('/matches', matchRouter);
 // Start server
 server.listen(PORT, HOST, () => {
   const baseUrl= HOST === '0.0.0.0' ? `http://localhost:${PORT}` : `http://${HOST}:${PORT}`;
