@@ -1,44 +1,47 @@
-import AgentAPI from 'apminsight';
+import AgentAPI from "apminsight";
 AgentAPI.config();
-import express from 'express';
-import http from 'http';
-import { matchRouter } from './routes/matches.js';
-import { attachWebSocketServer } from './ws/server.js';
-import { securityMiddleware } from './arcjet.js';
-import { commentaryRouter } from './routes/commentary.js';
 
+import express from "express";
+import http from "http";
 
+import { matchRouter } from "./routes/matches.js";
+import { commentaryRouter } from "./routes/commentary.js";
+import { attachWebSocketServer } from "./ws/server.js";
+import { securityMiddleware } from "./arcjet.js";
 
-
-const PORT = Number(process.env.PORT) || 8000;
-const HOST = process.env.HOST || '0.0.0.0';
 const app = express();
-const server=http.createServer(app);
+
+// Railway automatically sets PORT
+const PORT = process.env.PORT || 8000;
 
 // Middleware
 app.use(express.json());
-
-// Root GET route
-app.get('/', (req, res) => {
-  res.json({ message: 'Welcome to the Sportz API!' });
-});
-
-
 app.use(securityMiddleware());
 
+// Root route
+app.get("/", (req, res) => {
+  res.json({
+    message: "Welcome to the Sportz API 🚀",
+  });
+});
 
-// Import and use match routes
-app.use('/matches', matchRouter);
-app.use('/matches/:id/commentary', commentaryRouter);
+// API routes
+app.use("/matches", matchRouter);
+app.use("/matches/:id/commentary", commentaryRouter);
 
-const { broadcastMatchCreated, broadcastCommentary } = attachWebSocketServer(server);
+// Create HTTP server
+const server = http.createServer(app);
+
+// Attach WebSocket server
+const { broadcastMatchCreated, broadcastCommentary } =
+  attachWebSocketServer(server);
+
+// Make broadcast functions available in routes
 app.locals.broadcastMatchCreated = broadcastMatchCreated;
 app.locals.broadcastCommentary = broadcastCommentary;
 
-
 // Start server
-server.listen(PORT, HOST, () => {
-  const baseUrl= HOST === '0.0.0.0' ? `http://localhost:${PORT}` : `http://${HOST}:${PORT}`;
-  console.log(`Server is running at ${baseUrl}`);
-  console.log(`WebSocket server is available at ${baseUrl.replace(/^http/, 'ws')}/ws`);
+server.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📡 WebSocket available at ws://localhost:${PORT}/ws`);
 });
