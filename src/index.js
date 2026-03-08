@@ -1,6 +1,6 @@
 import AgentAPI from "apminsight";
 AgentAPI.config();
-
+import cors from "cors";
 import express from "express";
 import http from "http";
 
@@ -15,6 +15,7 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 // Middleware
+app.use(cors({ origin: "*" }));
 app.use(express.json());
 app.use(securityMiddleware());
 
